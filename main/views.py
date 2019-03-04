@@ -42,7 +42,5 @@ def register(request):
 
 
 def logout(request):
-    if request.session.get('is_login', None):
-        return redirect('/index')
     request.session.flush()
-    return redirect("/index/")
+    return render(request, 'main/logout.html')
