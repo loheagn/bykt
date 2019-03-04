@@ -7,10 +7,7 @@ from .forms import LoginForm
 
 
 def index(request):
-
-    message = '欢迎'
-    if request.session.get('is_login', None):
-        message = message + str(request.session['studentID'])
+    is_login = request.session.get('is_login', None)
     return render(request, 'main/index.html', locals())
 
 
