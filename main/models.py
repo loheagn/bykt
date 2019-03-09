@@ -21,3 +21,13 @@ class Student(models.Model):
 
 class ProfileImage(models.Model):
     image = models.ImageField(null=True, upload_to="images/profile")
+
+
+class Article(models.Model):
+    articleID = models.AutoField(primary_key=True)
+    authorName = models.CharField(max_length=128)
+    articleTitle = models.CharField(max_length=128, unique=False)
+    articleContent = models.TextField()
+    articlecopyContent = models.TextField()
+    article_copy_rate = models.FloatField()
+    student = models.ForeignKey("Student", on_delete=models.CASCADE, null=True)
