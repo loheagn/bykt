@@ -124,3 +124,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+
+# 动态文件的本地路径的绝对路径
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+MEDIA_URL = '/uploads/'
