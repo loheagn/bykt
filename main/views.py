@@ -100,10 +100,9 @@ def logout(request):
     return render(request, 'main/logout.html')
 
 
-
-
 def profile(request):
-    pass
+    student = Student.objects.get(pk=request.session.get('id'))
+    return render(request, 'main/profile.html', locals())
 
 
 def visit_show(request):

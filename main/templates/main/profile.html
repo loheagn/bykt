@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+{% load poll_extras %}
+{% block title %}
+    个人信息
+{% endblock %}
+{% block content %}
+    <div style="overflow: auto;max-height: 95%">
+        <div style="padding-left: 15%;">
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <table class="table" style="width: 60%;margin-bottom: 4%">
+                <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>密码</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td>
+                        {{ student.studentID }}
+                    </td>
+                    <td>
+                        {{ student.name }}
+                    </td>
+                    <td>
+                        <a href="/change_password/">修改密码</a>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+            <br>
+
+            <table class="table" style="width: 60%;margin-bottom: 4%">
+                <thead>
+                <tr>
+                    <th>学期论文</th>
+                    <th>参观展览</th>
+                    <th>锻炼信息</th>
+                    <th>志愿服务</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td>
+                        {% if student.my_article %}
+                            <span class="text-success">已通过</span>
+                        {% else %}
+                            <span class="text-warning">未通过</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ student.visit }}次/3次
+                    </td>
+                    <td>
+                        {{ student.sport }}公里
+                    </td>
+                    <td>
+                        {{ student.volunteer }}小时/16小时
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+{% endblock %}
