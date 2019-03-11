@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from .models import Student, ProfileImage, TmpImage, VisitImage
+from .models import Student, ProfileImage, TmpImage, VisitImage, Article
 from .forms import LoginForm, RegisterForm, VisitForm
 from .face_recognation import *
 import time
@@ -11,7 +11,6 @@ from urllib.request import quote, urlopen
 import lxml.html
 import jieba
 import re
-from . import models as Models
 import datetime
 
 
@@ -25,8 +24,7 @@ def test(request):
 
 def index(request):
     is_login = request.session.get('is_login', None)
-    sid = request.session['id']
-    student = Student.objects.get(pk=sid)
+    student = Student.objects.get(pk=request.session.get('id'))
     return render(request, 'main/index.html', locals())
 
 
@@ -101,11 +99,36 @@ def logout(request):
 
 
 def profile(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
     student = Student.objects.get(pk=request.session.get('id'))
     return render(request, 'main/profile.html', locals())
 
 
+def change_password(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
+    student = Student.objects.get(pk=request.session.get('id'))
+    if request.method == 'POST':
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        if password1 and password2:
+            if password2 != password1:
+                message = "两次输入的密码不同！"
+                return render(request, 'main/change_password.html', locals())
+            else:
+                student.password = password1
+                student.save()
+                return redirect('/profile/')
+    return render(request, 'main/change_password.html', locals())
+
+
 def visit_show(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
     alert = request.session.get('visit_alert')
     student = Student.objects.get(pk=request.session.get('id'))
     visit_images = VisitImage.objects.filter(student=student)
@@ -113,6 +136,9 @@ def visit_show(request):
 
 
 def visit(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
     form_flag = False
     student = Student.objects.get(pk=request.session.get('id'))
     visit_images = VisitImage.objects.filter(student=student)
@@ -153,7 +179,7 @@ def visit(request):
             e = numpy.linalg.norm(temp, axis=1, keepdims=True)
             min_distance = e.min()
             alert = False
-            if min_distance > 0.1 and min_distance < 0.5:
+            if 0.5 > min_distance > 0.1:
                 new_visit_image = VisitImage()
                 new_visit_image.image = image
                 new_visit_image.similar = min_distance
@@ -284,7 +310,7 @@ def article(request):
         articlesim += similarity_rate[3]
     articlesim /= len(similarity_rates)
 
-    Models.Article.objects.create(authorName=authorName, articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student_id=request.session['id'] + 1)
+    Article.objects.create(authorName=authorName, articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student_id=request.session['id'] + 1)
 
     context = {
         'similarity_rates': similarity_rates,
@@ -295,8 +321,11 @@ def article(request):
 
 
 def article_input(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
     stuID = request.session['id'] + 1
-    objs = Models.Article.objects.filter(student_id=stuID).values()
+    objs = Article.objects.filter(student_id=stuID).values()
     context = {
        'objs': objs
     }
@@ -324,7 +353,7 @@ def lcs(a, b):
 
 def show_detail(request):
     id = request.GET['id']
-    objs = Models.Article.objects.filter(articleID=id).values()
+    objs = Article.objects.filter(articleID=id).values()
     org_text = objs[0]['articleContent']
     cc_text = objs[0]['articlecopyContent']
     c, flag = lcs(org_text, cc_text)
