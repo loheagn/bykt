@@ -29,6 +29,26 @@ def search(request):
     return redirect('https://www.google.com.hk/search?q=' + key_word)
 
 
+def sport(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
+    student = Student.objects.get(pk=request.session.get('id'))
+    return render(request, 'main/sport.html', locals())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def index(request):
     is_login = request.session.get('is_login', None)
     if is_login:
@@ -317,8 +337,9 @@ def article(request):
     for similarity_rate in similarity_rates:
         articlesim += similarity_rate[3]
     articlesim /= len(similarity_rates)
+    student = Student.objects.get(pk=request.session.get('id'))
 
-    Article.objects.create(authorName=authorName, articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student_id=request.session['id'] + 1)
+    Article.objects.create(authorName=authorName, articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student=student)
 
     context = {
         'similarity_rates': similarity_rates,
@@ -332,12 +353,9 @@ def article_input(request):
     if not request.session.get('id'):
         request.session.flush()
         return redirect('/login/')
-    stuID = request.session['id'] + 1
+    stuID = request.session['id']
     objs = Article.objects.filter(student_id=stuID).values()
-    context = {
-       'objs': objs
-    }
-    return render(request, 'main/article_input.html', context)
+    return render(request, 'main/article_input.html', locals())
 
 
 def lcs(a, b):

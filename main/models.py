@@ -55,3 +55,12 @@ class VisitImage(models.Model):
     def __str__(self):
         return self.student.studentID
 
+
+class SportImage(models.Model):
+    image = models.ImageField(null=False, unique=True, upload_to="images/sport")
+    s_time = models.DateTimeField(null=False, unique=True)
+    student = models.ForeignKey("Student", on_delete=models.CASCADE, null=False)
+    number = models.FloatField(unique=False, null=False)
+    content = models.TextField(unique=True)
+    c_time = models.DateTimeField(auto_now_add=True)
+

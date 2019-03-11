@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^visit/', views.visit),
     url(r'^visit_show/', views.visit_show),
     url(r'^search/',views.search),
-    #url(r'^sport/', views.sport),
+    url(r'^sport/', views.sport),
     url(r'^profile', views.profile),
     url(r'^change_password', views.change_password)
     #url(r'^volunteer', views.volunteer),
