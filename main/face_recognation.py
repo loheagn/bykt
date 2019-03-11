@@ -53,13 +53,13 @@ def get_src_vectors_from_someone_single_image(file_name):
     return data[1:, :]
 
 
-def get_dst_vectors_from_single_image(image_path, file_name):
+def get_dst_vectors_from_single_image(file_name):
     data = np.zeros((1, 128))  # 定义一个128维的空向量data
     label = []  # 定义空的list存放人脸的标签
-    detector = dlib.cnn_face_detection_model_v1('./mmod_human_face_detector.dat')
-    sp = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
-    facerec = dlib.face_recognition_model_v1('./dlib_face_recognition_resnet_model_v1.dat')
-    img = cv2.imread(image_path + file_name)  # 使用opencv读取图像数据
+    detector = dlib.cnn_face_detection_model_v1('/home/loheagn/boyasite/main/mmod_human_face_detector.dat')
+    sp = dlib.shape_predictor('/home/loheagn/boyasite/main/shape_predictor_68_face_landmarks.dat')
+    facerec = dlib.face_recognition_model_v1('/home/loheagn/boyasite/main/dlib_face_recognition_resnet_model_v1.dat')
+    img = cv2.imread(file_name)  # 使用opencv读取图像数据
     dets = detector(img, 1)  # 使用检测算子检测人脸，返回的是所有的检测到的人脸区域
 
     for k, d in enumerate(dets):

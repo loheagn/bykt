@@ -24,10 +24,17 @@ urlpatterns = [
     url(r'^login/', views.login),
     url(r'^register/', views.register),
     url(r'^logout/', views.logout),
-    url(r'^captcha', include('captcha.urls'))
+    url(r'^captcha', include('captcha.urls')),
 
     url(r'^article/', views.article),
     url(r'^article_input/', views.article_input),
     url(r'^test/', views.test),
     url(r'^show_detail/', views.show_detail),
+
+
+    url(r'^visit/', views.visit),
+    url(r'^visit_show/', views.visit_show),
+    #url(r'^sport/', views.sport),
+    url(r'^profile', views.profile),
+    #url(r'^volunteer', views.volunteer),
 ]

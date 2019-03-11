@@ -1,18 +1,32 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from .models import Student, ProfileImage
-from .forms import LoginForm, RegisterForm
+from .models import Student, ProfileImage, TmpImage, VisitImage
+from .forms import LoginForm, RegisterForm, VisitForm
 from .face_recognation import *
 import time
 import numpy
+from gensim import corpora, models, similarities
+from urllib.request import quote, urlopen
+import lxml.html
+import jieba
+import re
+from . import models as Models
+import datetime
 
 
 # Create your views here.
+etree = lxml.html.etree
+
+
+def test(request):
+    return render(request, 'main/test.html')
 
 
 def index(request):
     is_login = request.session.get('is_login', None)
+    sid = request.session['id']
+    student = Student.objects.get(pk=sid)
     return render(request, 'main/index.html', locals())
 
 
@@ -53,6 +67,7 @@ def register(request):
             password1 = register_form.cleaned_data['password1']
             password2 = register_form.cleaned_data['password2']
             image = register_form.files['image']
+            image.name = image.name + str(time.time()).replace('.', '')
             same_id = Student.objects.filter(studentID=studentID)
             if same_id:
                 jump_to_login = True
@@ -83,6 +98,103 @@ def register(request):
 def logout(request):
     request.session.flush()
     return render(request, 'main/logout.html')
+
+
+
+
+def profile(request):
+    pass
+
+
+def visit_show(request):
+    alert = request.session.get('visit_alert')
+    student = Student.objects.get(pk=request.session.get('id'))
+    visit_images = VisitImage.objects.filter(student=student)
+    return render(request, 'main/visit_show.html', locals())
+
+
+def visit(request):
+    form_flag = False
+    student = Student.objects.get(pk=request.session.get('id'))
+    visit_images = VisitImage.objects.filter(student=student)
+    if request.method == 'POST':
+        # 获取上传的表格数据
+        time_value = request.POST.get('v_time')
+        v_time = datetime.datetime.strptime(time_value, '%Y-%M-%d').date()
+        location = request.POST.get('location')
+        image = request.FILES.get('image')
+        # image.name = image.name + str(time.time()).replace('.', '')
+        if v_time and location and image:
+            test_v_time = VisitImage.objects.filter(v_time=v_time)
+            if test_v_time:
+                message = "请勿上传同一天的参观照片！"
+                form_flag = True
+                visit_form = VisitForm()
+                return render(request, 'main/visit.html', locals())
+            test_location = VisitImage.objects.filter(location=location)
+            if test_location:
+                message = "请勿上传同一地点的参观照片！"
+                form_flag = True
+                visit_form = VisitForm()
+                return render(request, 'main/visit.html', locals())
+
+            old_face_array = numpy.load(student.face_array)
+
+            new_tmp_image = TmpImage(image=image)
+            new_tmp_image.save()
+            file_name = "/home/loheagn/boyasite/uploads/images/tmp/" + image.name
+            new_face_array = get_dst_vectors_from_single_image(file_name)
+            tmp_new_string_array = VisitImage.objects.filter(string_array=str(new_face_array.tolist()))
+            if tmp_new_string_array:
+                message = "请勿上传同一张照片！"
+                form_flag = True
+                visit_form = VisitForm()
+                return render(request, 'main/visit.html', locals())
+            temp = new_face_array - old_face_array
+            e = numpy.linalg.norm(temp, axis=1, keepdims=True)
+            min_distance = e.min()
+            alert = False
+            if min_distance > 0.1 and min_distance < 0.5:
+                new_visit_image = VisitImage()
+                new_visit_image.image = image
+                new_visit_image.similar = min_distance
+                new_visit_image.v_time = v_time
+                new_visit_image.location = location
+                new_visit_image.student = student
+                new_visit_image.is_ok = True
+                new_visit_image.string_array = str(new_face_array.tolist())
+                new_visit_image.save()
+                student.visit = student.visit + 1
+                student.save()
+                alert = True
+            else:
+                alert = False
+            request.session['visit_alert'] = alert
+            return redirect('/visit_show/')
+        else:
+            form_flag = True
+            message = "请再次仔细检查所填写的内容！"
+            visit_form = VisitForm()
+            return render(request, 'main/visit.html', locals())
+    else:
+        form_flag = True
+        visit_form = VisitForm()
+        return render(request, 'main/visit.html', locals())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def cut_text(text, lenth):

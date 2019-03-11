@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="margin-top: 2%">
+    {% for foo in org_text %}
+        {% if forloop.counter0 in org_index %}
+            <font color="red">{{ foo }}</font>
+        {% else %}
+            {{ foo }}
+        {% endif %}
+    {% endfor %}
+   </div>
+</body>
+</html>

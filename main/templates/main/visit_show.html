@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+{% block title %}
+    参观展览
+{% endblock %}
+
+{% block css %}
+    <script type="text/javascript" src="{% static "js/bootstrap-datetimepicker.min.js" %}"></script>
+    {#    <script type="text/javascript" src="{% static "js/locales/boot" %}"></script>#}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static "css/bootstrap-datetimepicker.min.css" %}"
+          media="screen">
+{% endblock %}
+
+{% block content %}
+    <div style="overflow: auto;max-height: 95%">
+
+        <div style="padding-left: 10%;margin-top: 1%">
+                {% if alert %}
+                    <h1 class="text-success">Finished!</h1>
+                    <br>
+                {% else %}
+                    <h1 class="text-danger">检测失败，请尝试上传其他照片！</h1>
+                    <br>
+                {% endif %}
+        </div>
+
+
+        <div style="padding-left: 10%;">
+            <table class="table" style="width: 60%;margin-bottom: 4%" id="tb1">
+                <caption>检测结果</caption>
+
+                <!--表头-->
+                <thead>
+                <tr>
+                    <th>参观时间</th>
+                    <th>参观地点</th>
+                    <th>人像识别相似度</th>
+                    <th>上传时间</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for each_visit_image in visit_images %}
+                    {% if each_visit_image.similar <= 0.48 and each_visit_image.similar >= 0.1 %}
+                        <tr class="success">
+                            {% elif each_visit_image.similar >= 0.48 and each_visit_image <= 0.5 %}
+                        <tr class="warning">
+                            {% else %}
+                        <tr class="danger">
+                    {% endif %}
+
+                <td>{{ each_visit_image.v_time|date:"Y-m-d" }}</td>
+                <td>{{ each_visit_image.location }}</td>
+                <td>{{ each_visit_image.similar }}</td>
+                <td>{{ each_visit_image.c_time|date:"Y-m-d H:i" }}</td>
+
+
+                </tr>
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+                        <h3>本学期已完成参观<span class="text-info">{{ student.visit }}</span>次，还需<span class="text-warning">{{ student.visit|need }}</span>次。</h3>
+
+        </div>
+
+    </div>
+{% endblock %}
