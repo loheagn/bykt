@@ -22,9 +22,17 @@ def test(request):
     return render(request, 'main/test.html')
 
 
+def search(request):
+    key_word = request.POST.get('key')
+    if not key_word:
+        key_word = ""
+    return redirect('https://www.google.com.hk/search?q=' + key_word)
+
+
 def index(request):
     is_login = request.session.get('is_login', None)
-    student = Student.objects.get(pk=request.session.get('id'))
+    if is_login:
+        student = Student.objects.get(pk=request.session.get('id'))
     return render(request, 'main/index.html', locals())
 
 
