@@ -9,8 +9,8 @@ class Student(models.Model):
     password = models.CharField(max_length=256)
     face_array = models.TextField(unique=True, null=False)
     visit = models.IntegerField(unique=False, null=False, default=0)
-    volunteer = models.IntegerField(unique=False, null=False, default=0)
-    old_volunteer = models.IntegerField(unique=False, null=False, default=0)
+    volunteer = models.FloatField(unique=False, null=False, default=0.0)
+    old_volunteer = models.FloatField(unique=False, null=False, default=0.0)
     sport = models.FloatField(unique=False, null=False, default=0.0)
     my_article = models.BooleanField(unique=False, null=False, default=False)
     c_time = models.DateTimeField(auto_now_add=True)
@@ -53,7 +53,7 @@ class VisitImage(models.Model):
     c_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.student.studentID
+        return str(self.student.studentID)
 
 
 class SportImage(models.Model):
@@ -61,6 +61,12 @@ class SportImage(models.Model):
     s_time = models.DateTimeField(null=False, unique=True)
     student = models.ForeignKey("Student", on_delete=models.CASCADE, null=False)
     number = models.FloatField(unique=False, null=False)
-    content = models.TextField(unique=True)
+    c_time = models.DateTimeField(auto_now_add=True)
+
+
+class VolunteerImage(models.Model):
+    image = models.ImageField(null=False, unique=True, upload_to='images/vol')
+    time_number = models.FloatField(null=False)
+    student = models.ForeignKey("Student", on_delete=models.CASCADE, null=False)
     c_time = models.DateTimeField(auto_now_add=True)
 

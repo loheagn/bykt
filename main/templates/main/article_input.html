@@ -1,22 +1,32 @@
 
 {% extends 'main/base.html' %}
-{% load staticfiles %}
+{% block title %}
+article
+{% endblock %}
 {% block content %}
-    <div style="overflow: auto;max-height: 95%">
-    <div  style="padding-left: 10%;margin-top: 1%">
+
+    <div style="overflow: auto;max-height: 95%;">
+    <div  style="padding-left: 10%;margin-top: 1%;float: left;width: 70%">
         <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-            <input id="author_name" type="text" class="form-control" placeholder="请输入您的姓名" style="width: 20%">
+            <input id="author_name" type="text" class="form-control" placeholder="请输入您的姓名" style="width: 40%">
         </div>
         <br>
       <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-book"></span></span>
-            <input id="article_title" type="text" class="form-control" placeholder="请输入文章标题" style="width: 58.5%">
+            <input id="article_title" type="text" class="form-control" placeholder="请输入文章标题" style="width: 78.5%">
         </div>
         <br>
-        <textarea class="form-control" rows="15" style="width: 60%;" id="art_name" placeholder="请输入您要查重的文章内容"></textarea>
+        <textarea class="form-control" rows="15" style="width: 80%;" id="art_name" placeholder="请输入您要查重的文章内容"></textarea>
         <button class="btn btn-primary" style="margin-top: 2%;" id="test2">提交文章</button>
     </div>
+     <div style="float: left;width: 20%;height: 40%;margin-top: 10%" class="panel panel-success">
+         <div class="panel-heading">通知</div>
+         <div class="panel-body">
+            本测评系统自动返回结果，绿色代表你的文章已经通过测试。黄色代表你的文章有一定抄袭嫌疑，建议修改以后再提交。红色代表
+             你的抄袭嫌疑较大，建议重新写过
+         </div>
+     </div>
     <div style="padding-left: 10%;">
     <table class="table" style="width: 60%;margin-bottom: 4%" id="tb1">
   <caption>检测结果</caption>
@@ -46,16 +56,15 @@
         <td>{{ obj.article_copy_rate }}</td>
 
 
-
     {% endfor %}
 
 
   </tbody>
 </table>
 </div>
-    <script src="{% static 'js/jump.js' %}">
+</div>
+
+    <script src="../../../static/js/jump.js">
 
     </script>
-
-</div>
 {% endblock %}

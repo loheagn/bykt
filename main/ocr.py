@@ -65,6 +65,6 @@ def get_number_and_name_from_single_picture(file_name):
 
 
 if __name__ == '__main__':
-    #print(str(read_lists_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))
-    #print(str(get_number_and_time_from_single_picture('/home/loheagn/Desktop/微信图片_20190311195526.png')))
-    print(str(get_number_and_name_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))
+    # print(str(read_lists_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))
+    print(str(get_number_and_time_from_single_picture('/home/loheagn/Desktop/微信图片_20190311195526.png')))
+    # print(str(get_number_and_name_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))

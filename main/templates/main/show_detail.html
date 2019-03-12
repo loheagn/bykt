@@ -1,11 +1,44 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="../../../static/css/normalize.css">
+<link rel="stylesheet" type="text/css" href="../../../static/css/demo.css">
+<link rel="stylesheet" type="text/css" href="../../../static/css/icons.css">
+
+   <link rel="stylesheet" type="text/css" href="../../../static/css/component.css">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="../../../static/js/layer/layer.js"></script>
+
+    {% block css %}
+
+    {% endblock %}
+
+
+
+    <script src="../../../static/js/modernizr.custom.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../static/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="../../../static/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script src="../../../static/js/jquery.min.js"></script>
+
+    <script src="../../../static/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <title>{% block title %}base{% endblock %}</title>
+
 </head>
 <body>
-<div style="margin-top: 2%">
+<div style="margin-top: 0%;">
+<span>
+    <a href="/delete?article_id={{ articleid }}" class="glyphicon glyphicon-trash" id="delete" ></a>
+    <h1 align="center">{{ title }}</h1>
+</span>
+<div style="margin-top: 1%">
     {% for foo in org_text %}
         {% if forloop.counter0 in org_index %}
             <font color="red">{{ foo }}</font>
@@ -13,6 +46,11 @@
             {{ foo }}
         {% endif %}
     {% endfor %}
-   </div>
+
+</div>
+
+
+</div>
+
 </body>
 </html>

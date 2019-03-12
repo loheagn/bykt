@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load staticfiles %}
+{% load poll_extras %}
 {% block title %}
     参观展览
 {% endblock %}
@@ -16,7 +17,7 @@
 
         <div style="padding-left: 10%;margin-top: 1%">
                 {% if alert %}
-                    <h1 class="text-success">Finished!</h1>
+                    <h1 class="text-success"></h1>
                     <br>
                 {% else %}
                     <h1 class="text-danger">检测失败，请尝试上传其他照片！</h1>

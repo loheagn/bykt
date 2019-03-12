@@ -46,10 +46,6 @@ def get_src_vectors_from_someone_single_image(file_name):
         faceArray = np.array(face_descriptor).reshape((1, 128))  # 转换成numpy中的数据结构
         data = np.concatenate((data, faceArray))  # 拼接到事先准备好的data当中去
         label.append(label)  # 保存标签
-        cv2.rectangle(img, (rec.left(), rec.top()), (rec.right(), rec.bottom()), (0, 255, 0), 2)  # 显示人脸区域
-    cv2.waitKey(2)
-    cv2.imshow('image', img)
-    cv2.destroyAllWindows()  # 关闭所有窗口
     return data[1:, :]
 
 
@@ -69,10 +65,6 @@ def get_dst_vectors_from_single_image(file_name):
         faceArray = np.array(face_descriptor).reshape((1, 128))  # 转换成numpy中的数据结构
         data = np.concatenate((data, faceArray))  # 拼接到事先准备好的data当中去
         label.append(label)  # 保存标签
-        cv2.rectangle(img, (rec.left(), rec.top()), (rec.right(), rec.bottom()), (0, 255, 0), 2)  # 显示人脸区域
-    cv2.waitKey(2)
-    cv2.imshow('image', img)
-    cv2.destroyAllWindows()
     return data[1:, :]
 
 

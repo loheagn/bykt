@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+{% load poll_extras %}
+{% block title %}
+    锻炼信息
+{% endblock %}
+{% block content %}
+    <div style="overflow: auto;max-height: 95%">
+        <div style="padding-left: 15%;">
+            <br>
+            <br>
+            <br>
+            <br>
+            <h1 class="text-success">检测成功！</h1>
+
+            <br>
+            <br>
+            <br>
+
+            <div class="progress progress-bar-danger" style="width: 60%;height: 40px;">
+                <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                     style="width: {{ student.sport|compute_sport_rate }};height: 40px;">
+                </div>
+            </div>
+
+
+
+            <h3>你已完成本学期锻炼任务的<span class="text-success">{{ student.sport|compute_sport_rate }}</span>，还需<span class="text-danger">{{ student.sport|compute_sport_gap }}</span>公里。</h3>
+
+        </div>
+    </div>
+{% endblock %}

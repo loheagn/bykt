@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from .models import Student, ProfileImage, TmpImage, VisitImage, Article
+from .models import *
 from .forms import LoginForm, RegisterForm, VisitForm
 from .face_recognation import *
 import time
@@ -12,6 +12,7 @@ import lxml.html
 import jieba
 import re
 import datetime
+from .ocr import *
 
 
 # Create your views here.
@@ -29,11 +30,58 @@ def search(request):
     return redirect('https://www.google.com.hk/search?q=' + key_word)
 
 
+def volunteer(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
+    student = Student.objects.get(pk=request.session.get('id'))
+
+
+
+
+
+def sport_show(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
+    student = Student.objects.get(pk=request.session.get('id'))
+    return render(request, 'main/sport_show.html', locals())
+
+
 def sport(request):
     if not request.session.get('id'):
         request.session.flush()
         return redirect('/login/')
     student = Student.objects.get(pk=request.session.get('id'))
+    if request.method == 'POST':
+        image = request.FILES.get('image')
+        if image:
+            tt = image.name.split('.')[-1]
+            image.name = str(time.time()).replace('.', '-') + '.' + tt
+            new_tmp_image = TmpImage(image=image)
+            new_tmp_image.save()
+            file_name = "/home/loheagn/boyasite/uploads/images/tmp/" + image.name
+            try:
+                number, s_time = get_number_and_time_from_single_picture(file_name)
+                s_time = datetime.datetime.strptime(s_time, '%Y-%m-%d%H：%M')
+                number = float(number)
+                test_sport_image = SportImage.objects.filter(s_time=s_time)
+                if test_sport_image:
+                    message = "图片疑似已被使用，请尝试其他有效截图！"
+                    return render(request, 'main/sport.html', locals())
+                sport_image = SportImage()
+                sport_image.image = image
+                sport_image.s_time = s_time
+                sport_image.student = student
+                sport_image.number = number
+                sport_image.save()
+                student.sport = student.sport + number
+                student.save()
+                return redirect('/sport_show/')
+            except:
+                message = "检测失败或图片疑似已被使用，请稍后刷新重试！"
+                return render(request, 'main/sport.html', locals())
+
     return render(request, 'main/sport.html', locals())
 
 
@@ -93,7 +141,8 @@ def register(request):
             password1 = register_form.cleaned_data['password1']
             password2 = register_form.cleaned_data['password2']
             image = register_form.files['image']
-            image.name = image.name + str(time.time()).replace('.', '')
+            sp = image.name.split('.')[-1]
+            image.name = 'profile' + str(time.time()).replace('.', '')[0] + '.' + sp
             same_id = Student.objects.filter(studentID=studentID)
             if same_id:
                 jump_to_login = True
@@ -111,12 +160,17 @@ def register(request):
             new_profile_image = ProfileImage(image=image)
             new_profile_image.save()
             file_name = "/home/loheagn/boyasite/uploads/images/profile/" + image.name
-            new_student.face_array = '/home/loheagn/boyasite/uploads/face_arrays/' + str(time.time()).split('.')[0] + '.npy'
-            numpy.save(new_student.face_array, get_src_vectors_from_someone_single_image(file_name))
-            new_student.save()
-            return redirect('/login/')
+            new_student.face_array = '/home/loheagn/boyasite/uploads/face_arrays/' + str(time.time()).replace('.', '')[0] + '.npy'
+            try:
+                numpy.save(new_student.face_array, get_src_vectors_from_someone_single_image(file_name))
+                new_student.save()
+                return redirect('/login/')
+            except:
+                message = '文件非法，请刷新页面并重试！'
+                return render(request, 'main/register.html', locals())
         else:
-            return HttpResponse("校验失败")
+            message = '文件非法，请刷新页面并重试！'
+            return render(request, 'main/register.html', locals())
     register_form = RegisterForm()
     return render(request, 'main/register.html', locals())
 
@@ -176,8 +230,9 @@ def visit(request):
         v_time = datetime.datetime.strptime(time_value, '%Y-%M-%d').date()
         location = request.POST.get('location')
         image = request.FILES.get('image')
-        # image.name = image.name + str(time.time()).replace('.', '')
         if v_time and location and image:
+            sp = image.name.split('.')[-1]
+            image.name = 'profile' + str(time.time()).replace('.', '')[0] + '.' + sp
             test_v_time = VisitImage.objects.filter(v_time=v_time)
             if test_v_time:
                 message = "请勿上传同一天的参观照片！"
@@ -223,7 +278,10 @@ def visit(request):
             else:
                 alert = False
             request.session['visit_alert'] = alert
-            return redirect('/visit_show/')
+            response = render(request, 'main/visit_show.html', locals())
+            while response is None:
+                response = render(request, 'main/visit_show.html', locals())
+            return render(request, 'main/visit_show.html', locals())
         else:
             form_flag = True
             message = "请再次仔细检查所填写的内容！"
@@ -289,7 +347,7 @@ def article(request):
     lines = request.GET['article_name']
     org_text = lines
     cc_text = ""
-    lines = cut_text(lines, 20)
+    lines = cut_text(lines, 40)
     header = "http://www.baidu.com/s?wd="
     similarity_rates = []
     for line in lines:
@@ -380,6 +438,8 @@ def lcs(a, b):
 def show_detail(request):
     id = request.GET['id']
     objs = Article.objects.filter(articleID=id).values()
+    articleid = objs[0]['articleID']
+    title = objs[0]['articleTitle']
     org_text = objs[0]['articleContent']
     cc_text = objs[0]['articlecopyContent']
     c, flag = lcs(org_text, cc_text)
@@ -397,8 +457,15 @@ def show_detail(request):
             len_cc = len_cc - 1
             repeat_index.append(len_org)
     context = {
+        'articleid': articleid,
+        'title': title,
         'org_text': org_text,
         'org_index': repeat_index
     }
     return render(request, 'main/show_detail.html', context)
 
+
+def delete(request):
+    article_id = request.GET['article_id']
+    article = Article.objects.filter(articleID=article_id).delete()
+    return render(request, 'main/delete.html')
