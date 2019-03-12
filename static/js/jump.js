@@ -5,15 +5,15 @@
                 var article_name = document.getElementById("art_name").value;
                 var bm = encodeURIComponent(article_name);
                 bm = decodeURIComponent(bm);
-                var authorName = document.getElementById("author_name").value;
+                //var authorName = document.getElementById("author_name").value;
                 var articleTitle = document.getElementById("article_title").value;
 
-                //alert(bm);
+                // alert(articleTitle);
                 layer.open({
                     type: 2,
-                    area: ['1000px', '750px'],
+                    area: ['800px', '600px'],
                     shadeClose: true, //点击遮罩关闭
-                    content: '/article/?article_name='+bm+'&authorname='+authorName+'&articletitle='+articleTitle,
+                    content: '/article/?article_name='+bm+'&articletitle='+articleTitle,
                     end: function () {
                         location.reload();
                     }
@@ -24,7 +24,7 @@
                 currentEle.on('click',function () {
                       layer.open({
                     type: 2,
-                    area: ['1000px', '750px'],
+                    area: ['800px', '600px'],
                     shadeClose: true, //点击遮罩关闭
                     content: '/show_detail/?id='+this.innerText,
                     end: function () {

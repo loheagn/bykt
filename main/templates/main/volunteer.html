@@ -1,0 +1,87 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+{% load poll_extras %}
+{% block title %}
+    志愿服务
+{% endblock %}
+{% block content %}
+    <div style="overflow: auto;max-height: 95%">
+        <div style="padding-left: 15%;">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <form method="post" action="/volunteer/" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if message %}
+                    <div class="alert alert-warning" style="width: 50%">{{ message }}</div>
+                {% endif %}
+                <input type="file" style="display: none" id="id_image" name="image" required />
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-picture"></span></span>
+                    <input id="uploadurl" class="form-control" type="text" placeholder="请选择志愿北京相应页面的截图" style="width: 25%"
+                           disabled/>
+                    &ensp;&ensp;&ensp;
+                    <button class="btn btn-green" type="button" onclick="$('input[id=id_image]').click();">
+                        <span class="glyphicon glyphicon-folder-open">&ensp;浏览</span>
+                    </button>
+                </div>
+                <script type="text/javascript">
+                    $('input[id=id_image]').change(function () {
+                        var path = $(this).val();
+                        path = path.split('\\');
+                        path = path[path.length - 1];
+                        $('#uploadurl').val(path);
+                    });
+                </script>
+                <button class="btn btn-primary" style="margin-top: 2%;" type="submit">提交</button>
+
+
+            </form>
+
+            <br>
+            <br>
+            <br>
+
+            <table class="table" style="width: 60%;margin-bottom: 4%" id="tb1">
+
+                <!--表头-->
+                <thead>
+
+                <tr>
+                    <th>历史完成志愿服务时长</th>
+                    <th>本学期完成支援服务时长</th>
+                    <th>状态</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+                <tr>
+
+                    <td>{{ student.old_volunteer }}小时</td>
+                    <td><span class="text-success">{{ student.volunteer }}</span>小时/<span class="text-danger">16</span>小时
+                    </td>
+                    <td>
+                        {% if flag %}
+                        <span class="text-success">通过</span>
+                            {% else %}
+                            <span class="text-danger">未通过</span>
+                        {% endif %}
+                    </td>
+
+
+                </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

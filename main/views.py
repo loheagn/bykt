@@ -35,8 +35,49 @@ def volunteer(request):
         request.session.flush()
         return redirect('/login/')
     student = Student.objects.get(pk=request.session.get('id'))
+    if request.method == 'POST':
+        image = request.FILES.get('image')
+        if image:
+            tt = image.name.split('.')[-1]
+            image.name = str(time.time()).replace('.', '-') + '.' + tt
+            new_tmp_image = TmpImage(image=image)
+            new_tmp_image.save()
+            file_name = "/home/loheagn/boyasite/uploads/images/tmp/" + image.name
+            try:
+                number, name = get_number_and_name_from_single_picture(file_name)
+                number = float(number)
+                name = str(name)
+                if student.name != name:
+                    message = "所上传截图与注册姓名不符，请重新确认！"
+                    return render(request, 'main/volunteer.html', locals())
+                vol_image = VolunteerImage()
+                vol_image.student = student
+                vol_image.image = image
+                vol_image.time_number = number
+                vol_image.save()
+                student.volunteer = number - student.old_volunteer
+                if student.volunteer >= 16:
+                    flag = True
+                else:
+                    flag = False
+                student.save()
+                return redirect('/volunteer_show/')
+            except:
+                message = "图片检测失败，请稍后刷新重试！"
+                return render(request, 'main/volunteer.html', locals())
+    return render(request, 'main/volunteer.html', locals())
 
 
+def volunteer_show(request):
+    if not request.session.get('id'):
+        request.session.flush()
+        return redirect('/login/')
+    student = Student.objects.get(pk=request.session.get('id'))
+    if student.volunteer >= 16:
+        flag = True
+    else:
+        flag = False
+    return render(request, 'main/volunteer_show.html', locals())
 
 
 
@@ -389,20 +430,20 @@ def article(request):
             len_org = len_org - 1
             len_cc = len_cc - 1
             repeat_index.append(len_org)
-    authorName = request.GET['authorname']
+    #authorName = request.GET['authorname']
     articletitle = request.GET['articletitle']
-    articlesim = 0.0
-    for similarity_rate in similarity_rates:
-        articlesim += similarity_rate[3]
-    articlesim /= len(similarity_rates)
+    articlesim = len(cc_text)/len(org_text)
     student = Student.objects.get(pk=request.session.get('id'))
-
-    Article.objects.create(authorName=authorName, articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student=student)
+    if articlesim < 0.4:
+        student.my_article = True
+        student.save()
+    Article.objects.create(articleTitle=articletitle, articleContent=org_text, articlecopyContent=cc_text, article_copy_rate=articlesim, student=student)
 
     context = {
         'similarity_rates': similarity_rates,
         'org_text': org_text,
-        'org_index': repeat_index
+        'org_index': repeat_index,
+        'simi_r': articlesim
     }
     return render(request, 'main/article.html', context=context)
 

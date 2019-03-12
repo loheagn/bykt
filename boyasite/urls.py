@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^sport/', views.sport),
     url(r'^sport_show/', views.sport_show),
     url(r'^profile', views.profile),
-    url(r'^change_password', views.change_password)
-    #url(r'^volunteer', views.volunteer),
+    url(r'^change_password', views.change_password),
+    url(r'^volunteer', views.volunteer),
+    url(r'^volunteer_show', views.volunteer_show),
 ]

@@ -34,7 +34,7 @@ class TmpImage(models.Model):
 
 class Article(models.Model):
     articleID = models.AutoField(primary_key=True)
-    authorName = models.CharField(max_length=128)
+    #authorName = models.CharField(max_length=128)
     articleTitle = models.CharField(max_length=128, unique=False)
     articleContent = models.TextField()
     articlecopyContent = models.TextField()

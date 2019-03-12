@@ -38,7 +38,7 @@
     <a href="/delete?article_id={{ articleid }}" class="glyphicon glyphicon-trash" id="delete" ></a>
     <h1 align="center">{{ title }}</h1>
 </span>
-<div style="margin-top: 1%">
+<div style="margin-top: 1%;padding-left: 10%;padding-right: 10%">
     {% for foo in org_text %}
         {% if forloop.counter0 in org_index %}
             <font color="red">{{ foo }}</font>
