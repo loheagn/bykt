@@ -30,7 +30,6 @@ article
   <thead>
     <tr>
       <th>文章编号</th>
-      <th>姓名</th>
       <th>文章标题</th>
       <th>重复率</th>
     </tr>
@@ -48,7 +47,6 @@ article
             <tr class="success">
         {% endif %}
         <td><a id="ar" name="detail">{{ obj.articleID }}</a></td>
-        <td>{{ obj.authorName }}</td>
         <td>{{ obj.articleTitle }}</td>
         <td>{{ obj.article_copy_rate }}</td>
 

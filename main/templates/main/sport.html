@@ -55,7 +55,7 @@
 
 
 
-            <h3>你已完成本学期锻炼任务的<span class="text-success">{{ student.sport|compute_sport_rate }}</span>，还需<span class="text-danger">{{ student.sport|compute_sport_gap }}</span>公里。</h3>
+            <h3>你已完成本学期锻炼任务的<span class="text-success">{{ student.sport|compute_sport_rate }}</span>，还需<span class="text-danger">{{ student.sport|compute_sport_gap|floatformat:"2" }}</span>公里。</h3>
 
         </div>
     </div>

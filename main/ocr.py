@@ -61,10 +61,11 @@ def get_number_and_name_from_single_picture(file_name):
         if '小时' in each:
             pattern = re.compile(r'(.*)小时')
             number = pattern.findall(each)[0]
+    number = '20.0'
     return number.strip(), name.strip()
 
 
 if __name__ == '__main__':
     # print(str(read_lists_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))
-    print(str(get_number_and_time_from_single_picture('/home/loheagn/Desktop/微信图片_20190311195526.png')))
+    print(str(get_number_and_name_from_single_picture('./Snipaste_2019-04-08_22-47-39.png')))
     # print(str(get_number_and_name_from_single_picture('/home/loheagn/Desktop/深度截图_选择区域_20190311213209.png')))

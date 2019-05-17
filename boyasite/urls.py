@@ -34,7 +34,7 @@ urlpatterns = [
 
     url(r'^visit/', views.visit),
     url(r'^visit_show\d*/', views.visit_show),
-    url(r'^search/',views.search),
+    url(r'^search/', views.search),
     url(r'^sport/', views.sport),
     url(r'^sport_show/', views.sport_show),
     url(r'^profile', views.profile),
